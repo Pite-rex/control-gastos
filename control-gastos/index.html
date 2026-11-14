@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control de Fondos y Gastos</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+
+  <!-- PANTALLA DE LOGIN (Visible solo si no hay sesión iniciada) -->
+  <div id="loginScreen" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <span class="badge">Acceso Restringido</span>
+        <h1>Control de Gastos</h1>
+        <p class="muted">Inicia sesión con tu cuenta autorizada para consultar o registrar movimientos.</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Correo electrónico</label>
+          <input type="email" id="loginEmail" placeholder="usuario@correo.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+
+        <p id="loginError" class="error-msg hidden"></p>
+
+        <button type="submit" class="btn btn-primary full-btn" id="loginBtn">Entrar al Sistema</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APLICACIÓN PRINCIPAL (Oculta hasta iniciar sesión) -->
+  <div id="appContainer" class="hidden">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Control de Gastos</h1>
+        <span class="badge" id="userEmailBadge">Cargando...</span>
+      </div>
+
+      <nav class="nav-tabs" id="navTabs">
+        <button class="tab-btn active" data-view="dashboard">Resumen</button>
+        <button class="tab-btn" data-view="registrar">+ Registrar</button>
+        <button class="tab-btn" data-view="historial">Historial</button>
+        <button class="tab-btn" data-view="proyectos">Proyectos</button>
+        <button class="btn btn-sm btn-danger" id="logoutBtn">Salir</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <!-- VISTA 1: DASHBOARD / RESUMEN -->
+      <section id="view-dashboard" class="view active">
+        <div class="section-header">
+          <h2>Estado General de Cuentas</h2>
+          <select id="dashProjectFilter" class="input-select">
+            <option value="ALL">Todos los proyectos</option>
+          </select>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-title">Dinero Recibido (Fondos)</span>
+            <strong class="kpi-value text-blue" id="kpi-recibido">$0.00</strong>
+            <small>Total entregado para compras</small>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Gasto Neto Comprobado</span>
+            <strong class="kpi-value text-orange" id="kpi-gasto">$0.00</strong>
+            <small>Compras menos devoluciones</small>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Saldo Disponible en Mano</span>
+            <strong class="kpi-value text-green" id="kpi-saldo">$0.00</strong>
+            <small id="kpi-saldo-nota">Efectivo / cuenta por comprobar</small>
+          </div>
+        </div>
+
+        <h3 class="sub-title">Desglose por Proyecto</h3>
+        <div class="projects-summary-grid" id="projectsSummaryGrid"></div>
+      </section>
+
+      <!-- VISTA 2: REGISTRAR MOVIMIENTO -->
+      <section id="view-registrar" class="view">
+        <div class="card form-card">
+          <h2 id="formTitle">Registrar Nuevo Movimiento</h2>
+          <form id="movementForm">
+            <input type="hidden" id="editId" />
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="movProject">Proyecto *</label>
+                <select id="movProject" required></select>
+              </div>
+
+              <div class="form-group">
+                <label for="movType">Tipo de Movimiento *</label>
+                <select id="movType" required>
+                  <option value="gasto">Compra / Gasto (-)</option>
+                  <option value="ingreso">Fondo Recibido / Entrega (+)</option>
+                  <option value="devolucion">Devolución / Reintegro (+)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="movDate">Fecha *</label>
+                <input type="date" id="movDate" required />
+              </div>
+
+              <div class="form-group">
+                <label for="movAmount">Monto ($) *</label>
+                <input type="number" id="movAmount" step="0.01" min="0.01" placeholder="0.00" required />
+              </div>
+
+              <div class="form-group">
+                <label for="movMethod">Método de Pago</label>
+                <select id="movMethod">
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Transferencia">Transferencia</option>
+                  <option value="Tarjeta">Tarjeta</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="movPerson">Responsable / Quién realizó</label>
+                <input type="text" id="movPerson" placeholder="Ej. Piter, Juan..." />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="movConcept">Concepto / Descripción de la compra *</label>
+                <input type="text" id="movConcept" placeholder="Ej. Compra de material, cableado, envío..." required />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="movDriveUrl">Enlace de Google Drive (Ticket, PDF o Transferencia)</label>
+                <input type="url" id="movDriveUrl" placeholder="https://drive.google.com/file/d/..." />
+                <small class="help-text">Verifica que el archivo en Drive tenga acceso "Cualquier persona con el enlace (Lector)".</small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="submitBtn">Guardar Movimiento</button>
+              <button type="button" class="btn btn-secondary hidden" id="cancelEditBtn">Cancelar Edición</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- VISTA 3: HISTORIAL Y TABLA -->
+      <section id="view-historial" class="view">
+        <div class="section-header">
+          <h2>Historial de Movimientos</h2>
+          <button class="btn btn-outline" id="exportCsvBtn">Descargar Excel (CSV)</button>
+        </div>
+
+        <div class="filters-bar">
+          <select id="filterProject" class="input-select">
+            <option value="ALL">Todos los proyectos</option>
+          </select>
+          <select id="filterType" class="input-select">
+            <option value="ALL">Todos los tipos</option>
+            <option value="ingreso">Fondos recibidos (+)</option>
+            <option value="gasto">Compras / Gastos (-)</option>
+            <option value="devolucion">Devoluciones (+)</option>
+          </select>
+          <input type="text" id="filterSearch" class="input-text" placeholder="Buscar por concepto o responsable..." />
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Proyecto</th>
+                <th>Tipo</th>
+                <th>Concepto</th>
+                <th>Responsable</th>
+                <th>Método</th>
+                <th class="text-right">Monto</th>
+                <th class="text-center">Comprobante</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="movementsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA 4: PROYECTOS -->
+      <section id="view-proyectos" class="view">
+        <div class="card form-card">
+          <h2>Administrar Proyectos</h2>
+          <p class="muted">Agrega los proyectos en los que están trabajando para llevar sus cuentas por separado.</p>
+          <form id="projectForm" class="inline-form">
+            <input type="text" id="newProjectName" placeholder="Nombre del nuevo proyecto" required />
+            <button type="submit" class="btn btn-primary">Agregar Proyecto</button>
+          </form>
+          <ul class="project-list" id="projectList"></ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Archivo principal como módulo ES6 para conectar con Firebase -->
+  <script type="module" src="./js/Firebase/app.js"></script>
+</body>
+</html>
