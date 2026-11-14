@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- PANTALLA DE LOGIN (Visible solo si no hay sesión iniciada) -->
+  <!-- PANTALLA DE LOGIN -->
   <div id="loginScreen" class="login-wrapper">
     <div class="login-card">
       <div class="login-header">
@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <!-- APLICACIÓN PRINCIPAL (Oculta hasta iniciar sesión) -->
+  <!-- APLICACIÓN PRINCIPAL -->
   <div id="appContainer" class="hidden">
     <header class="topbar">
       <div class="brand">
@@ -57,9 +57,12 @@
       <section id="view-dashboard" class="view active">
         <div class="section-header">
           <h2>Estado General de Cuentas</h2>
-          <select id="dashProjectFilter" class="input-select">
-            <option value="ALL">Todos los proyectos</option>
-          </select>
+          <div class="header-actions">
+            <select id="dashProjectFilter" class="input-select">
+              <option value="ALL">Todos los proyectos</option>
+            </select>
+            <button class="btn btn-secondary" id="copySummaryBtn">Copiar Corte (WhatsApp)</button>
+          </div>
         </div>
 
         <div class="kpi-grid">
@@ -127,7 +130,7 @@
 
               <div class="form-group">
                 <label for="movPerson">Responsable / Quién realizó</label>
-                <input type="text" id="movPerson" placeholder="Ej. Piter, Juan..." />
+                <input type="text" id="movPerson" placeholder="Ej. Piter, Maestro..." />
               </div>
 
               <div class="form-group full-width">
@@ -138,7 +141,7 @@
               <div class="form-group full-width">
                 <label for="movDriveUrl">Enlace de Google Drive (Ticket, PDF o Transferencia)</label>
                 <input type="url" id="movDriveUrl" placeholder="https://drive.google.com/file/d/..." />
-                <small class="help-text">Verifica que el archivo en Drive tenga acceso "Cualquier persona con el enlace (Lector)".</small>
+                <small class="help-text">Opcional si recibiste efectivo en mano. Si subes archivo, ponlo en "Cualquier persona con el enlace (Lector)".</small>
               </div>
             </div>
 
@@ -166,6 +169,11 @@
             <option value="ingreso">Fondos recibidos (+)</option>
             <option value="gasto">Compras / Gastos (-)</option>
             <option value="devolucion">Devoluciones (+)</option>
+          </select>
+          <select id="filterReceipt" class="input-select">
+            <option value="ALL">Todos los comprobantes</option>
+            <option value="MISSING">Falta ticket / comprobante</option>
+            <option value="HAS">Con comprobante en Drive</option>
           </select>
           <input type="text" id="filterSearch" class="input-text" placeholder="Buscar por concepto o responsable..." />
         </div>
@@ -205,7 +213,6 @@
     </main>
   </div>
 
-  <!-- Archivo principal como módulo ES6 para conectar con Firebase -->
   <script type="module" src="./js/Firebase/app.js"></script>
 </body>
 </html>
