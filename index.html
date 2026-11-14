@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Control de Fondos y Gastos</title>
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
+
 <body>
 
   <!-- PANTALLA DE LOGIN -->
@@ -25,7 +27,16 @@
 
         <div class="form-group">
           <label for="loginPassword">Contraseña</label>
-          <input type="password" id="loginPassword" placeholder="••••••••" required />
+          <div class="password-wrapper">
+            <input type="password" id="loginPassword" placeholder="••••••••" required />
+            <button type="button" class="toggle-pass-btn" id="togglePasswordBtn" title="Mostrar u ocultar contraseña">
+              <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <p id="loginError" class="error-msg hidden"></p>
@@ -141,7 +152,8 @@
               <div class="form-group full-width">
                 <label for="movDriveUrl">Enlace de Google Drive (Ticket, PDF o Transferencia)</label>
                 <input type="url" id="movDriveUrl" placeholder="https://drive.google.com/file/d/..." />
-                <small class="help-text">Opcional si recibiste efectivo en mano. Si subes archivo, ponlo en "Cualquier persona con el enlace (Lector)".</small>
+                <small class="help-text">Opcional si recibiste efectivo en mano. Si subes archivo, ponlo en "Cualquier
+                  persona con el enlace (Lector)".</small>
               </div>
             </div>
 
@@ -215,4 +227,5 @@
 
   <script type="module" src="./js/Firebase/app.js"></script>
 </body>
+
 </html>
